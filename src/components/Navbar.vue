@@ -4,6 +4,9 @@ import timer from '../assets/timer.svg'
 import shop from '../assets/shop.svg'
 import profile from '../assets/profile.svg'
 import { ref } from 'vue'
+import { setupAuthProvider } from '../auth/AuthProvider.js';
+
+const { userData } = setupAuthProvider();
 
 const isMenuOpen = ref(false)
 const toggleMenu = () => {
@@ -11,6 +14,7 @@ const toggleMenu = () => {
 }
 
 </script>
+
 
 <template>
 
@@ -23,7 +27,8 @@ const toggleMenu = () => {
 
       </a>
       <div class="flex md:order-2 space-x-3 md:space-x-0">
-        <button type="button" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 text-center">Login</button>
+        <router-link class="font-medium text-sm md:px-4 sm:px-2 py-2 text-center text-gray-900" to="/login">Login</router-link>
+        <router-link to="/register" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 text-center">Registrieren</router-link>
         <button @click="toggleMenu" type="button" class="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200">
           <span class="sr-only">Open main menu</span>
           <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 17 14">
@@ -33,7 +38,7 @@ const toggleMenu = () => {
       </div>
 
       <div class="w-full" :class="{ 'hidden': !isMenuOpen }" id="navbar-mobile">
-        <ul class="flex flex-col font-medium mt-4 rounded-lg bg-gray-50">
+        <ul class="flex flex-col font-medium mt-4 rounded-lg">
           <li>
             <router-link to="/" class="flex items-center py-2 px-3 text-gray-900 rounded hover:bg-gray-100">
               <img :src="timer" class="w-6 h-5 me-2" alt="Timer">
@@ -80,6 +85,8 @@ const toggleMenu = () => {
     </div>
   </nav>
 
+  <div v-if="userData.id">{{ userData }}</div>
+  
 
 
 

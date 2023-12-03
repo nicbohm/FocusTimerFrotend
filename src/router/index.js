@@ -3,6 +3,7 @@ import Timer from '../views/Timer.vue'
 import Shop from '../views/Shop.vue'
 import Profile from '../views/Profile.vue'
 import Login from '../views/Login.vue'
+import Register from '../views/Register.vue'
 
 const routes = [
     {
@@ -21,9 +22,14 @@ const routes = [
         component: Profile
     },
     {
-      path: '/login',
-      name: 'Login',
-      component: Login
+        path: '/login',
+        name: 'Login',
+        component: Login
+    },
+    {
+        path: '/register',
+        name: 'Register',
+        component: Register
     }
 ]
 
