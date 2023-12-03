@@ -26,6 +26,7 @@ export const useAuthStore = defineStore('auth', {
             } catch (error) {
                 // Der Token kann auch ablaufen, dann ist hier Schluss
                 localStorage.removeItem('authToken');
+                this.authUser = null;
             } finally {
                 this.isLoading = false;
             }
@@ -67,7 +68,11 @@ export const useAuthStore = defineStore('auth', {
               } finally {
                   this.isLoading = false;
               }
-
+          },
+          async logoutUser() {
+            // Logout durchführen
+            localStorage.removeItem('authToken');
+            this.authUser = null;
           },
     },
 })

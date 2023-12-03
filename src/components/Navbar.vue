@@ -3,6 +3,7 @@ import coin from '../assets/coin.svg'
 import timer from '../assets/timer.svg'
 import shop from '../assets/shop.svg'
 import profile from '../assets/profile.svg'
+import arrow from '../assets/arrow.svg'
 import { ref, onMounted, onUnmounted } from 'vue'
 import { useAuthStore } from '../stores/auth.js';
 
@@ -11,6 +12,13 @@ onMounted(async () => {
   await authStore.getUser();
 })
 
+// User Dropdown
+const isUserDropdownOpen = ref(false)
+const toggleUserDropdown = () => {
+  isUserDropdownOpen.value = !isUserDropdownOpen.value
+}
+
+// Mobile Menu
 const isMenuOpen = ref(false)
 const toggleMenu = () => {
   isMenuOpen.value = !isMenuOpen.value
@@ -32,20 +40,33 @@ onUnmounted(() => {
 
 </script>
 
-
 <template>
-
   <nav class="bg-white w-full z-20 top-0 start-0 border-b border-gray-200">
     <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
       <a class="flex items-center space-x-3">
-
-      <img :src="coin" class="h-8" alt="Coin">
-      <span class="self-center font-medium font-semibold whitespace-nowrap">0 Coins</span>
-
+        <img :src="coin" class="h-8" alt="Coin">
+        <span v-if="authStore.user" class="self-center font-medium font-semibold whitespace-nowrap">{{ authStore.user.coins }} Coins</span>
+        <span v-else class="self-center font-medium font-semibold whitespace-nowrap">0 Coins</span>
       </a>
       <div class="flex md:order-2 space-x-3 md:space-x-0">
-        <router-link class="font-medium text-sm md:px-4 sm:px-2 py-2 text-center text-gray-900" to="/login">Login</router-link>
-        <router-link to="/register" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 text-center">Registrieren</router-link>
+        <router-link v-if="!authStore.user" to="/login" class="font-medium text-sm md:px-4 sm:px-2 py-2 text-center text-gray-900">Login</router-link>
+        <router-link v-if="!authStore.user" to="/register" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 text-center">Registrieren</router-link>
+        <div v-if="authStore.user" class="flex justify-end inline-block text-left">
+          <button @click="toggleUserDropdown" class="rounded-lg text-sm px-4 py-2 inline-flex w-full justify-center items-center font-medium text-sm md:px-4 sm:px-2 py-2">
+            {{ authStore.user.userName }}
+            <img :src="arrow" class="ml-2 h-3 w-3" alt="Arrow">
+          </button>
+          <div v-if="isUserDropdownOpen" class="absolute w-56 mt-14 text-base list-none bg-white divide-y divide-gray-200 rounded-lg shadow">
+            <div class="px-4 py-3">
+              <span class="block text-sm text-gray-900">{{ authStore.user.email }}</span>
+            </div>
+            <ul class="py-2" aria-labelledby="user-menu-button">
+              <li>
+                <button @click="authStore.logoutUser(); toggleUserDropdown()" class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Logout</button>
+              </li>
+            </ul>
+          </div>
+        </div>
         <button @click="toggleMenu" type="button" class="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200">
           <span class="sr-only">Open main menu</span>
           <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 17 14">
@@ -53,7 +74,6 @@ onUnmounted(() => {
           </svg>
         </button>
       </div>
-
       <div class="w-full" :class="{ 'hidden': !isMenuOpen }" id="navbar-mobile">
         <ul class="flex flex-col font-medium mt-4 rounded-lg">
           <li>
@@ -76,7 +96,6 @@ onUnmounted(() => {
           </li>
         </ul>
       </div>
-
       <div class="items-center justify-between hidden w-full md:flex md:w-auto md:order-1" id="navbar-sticky">
         <ul class="flex flex-col p-4 md:p-0 mt-4 font-medium border border-gray-100 rounded-lg bg-gray-50 md:space-x-8 md:flex-row md:mt-0 md:border-0 md:bg-white">
           <li>
@@ -101,13 +120,6 @@ onUnmounted(() => {
       </div>
     </div>
   </nav>
-
-  <div v-if="authStore.user">
-    <p>{{ authStore.user.userName }}</p>
-    <p>{{ authStore.user.email }}</p>
-    <p>{{ authStore.user.coins }}</p>
-  </div>
-
 </template>
 
 <style scoped>
