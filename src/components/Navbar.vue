@@ -4,9 +4,12 @@ import timer from '../assets/timer.svg'
 import shop from '../assets/shop.svg'
 import profile from '../assets/profile.svg'
 import { ref, onMounted, onUnmounted } from 'vue'
-import { setupAuthProvider } from '../auth/AuthProvider.js';
+import { useAuthStore } from '../stores/auth.js';
 
-const { userData } = setupAuthProvider();
+const authStore = useAuthStore();
+onMounted(async () => {
+  await authStore.getUser();
+})
 
 const isMenuOpen = ref(false)
 const toggleMenu = () => {
@@ -99,15 +102,14 @@ onUnmounted(() => {
     </div>
   </nav>
 
-  <div v-if="userData.id">{{ userData }}</div>
-  
-
-
+  <div v-if="authStore.user">
+    <p>{{ authStore.user.userName }}</p>
+    <p>{{ authStore.user.email }}</p>
+    <p>{{ authStore.user.coins }}</p>
+  </div>
 
 </template>
 
 <style scoped>
-.test {
-  color:red;
-}
+
 </style>

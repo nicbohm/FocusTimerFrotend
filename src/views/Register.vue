@@ -1,4 +1,14 @@
 <script setup>
+import { ref } from 'vue';
+import { useAuthStore } from '../stores/auth.js'
+
+const authStore = useAuthStore();
+
+const form = ref({
+  username: "",
+  email: "",
+  password: "",
+});
 
 </script>
 
@@ -9,28 +19,26 @@
                 <h1 class="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl">
                 Ein Konto erstellen
                 </h1>
-                <div v-if="error" class="alert_error">
-                Fehler
+                <div v-if="authStore.authError" class="text-red-500" role="alert">
+                    Es ist ein Fehler aufgetreten. Bitte überprüfen Sie Ihre Eingaben und versuchen Sie es erneut.
                 </div>
-                <form name="basic" class="space-y-4 md:space-y-6">
+                <form @submit.prevent="authStore.registerUser(form)" class="space-y-4 md:space-y-6">
                     <div>
                         <label for="username" class="block mb-2 text-sm font-medium text-gray-900">Benutzername</label>
-                        <input type="text" name="username" id="username" class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5" placeholder="Benutzername" />
+                        <input v-model="form.username" type="text" name="username" id="username" class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5" placeholder="Benutzername" />
                     </div>
                     <div>
                         <label for="email" class="block mb-2 text-sm font-medium text-gray-900">E-Mail</label>
-                        <input type="email" name="email" id="email" class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5" placeholder="name@company.com" />
+                        <input v-model="form.email" type="email" name="email" id="email" class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5" placeholder="name@company.com" />
                     </div>
                     <div>
                         <label for="password" class="block mb-2 text-sm font-medium text-gray-900">Password</label>
-                        <input type="password" name="password" id="password" placeholder="••••••••" class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5" />
+                        <input v-model="form.password" type="password" name="password" id="password" placeholder="••••••••" class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5" />
                     </div>
                     <div>
-                        <button type="submit" class="w-full text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">
-                        Registrieren
-                        <span v-if="isLoading">
-                            <i class="animate-spin">Lade...</i>
-                        </span>
+                        <button type="submit" class="w-full flex justify-center items-center text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center" :disabled="authStore.isLoading">
+                            Registrieren
+                            <div v-if="authStore.isLoading" class="h-5 w-5 ms-2 animate-spin rounded-full border-4 border-solid border-current border-r-transparent text-white"></div>
                         </button>
                     </div>
                     <p class="text-sm font-light text-gray-500">
