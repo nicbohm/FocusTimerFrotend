@@ -3,7 +3,7 @@ import coin from '../assets/coin.svg'
 import timer from '../assets/timer.svg'
 import shop from '../assets/shop.svg'
 import profile from '../assets/profile.svg'
-import { ref } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 import { setupAuthProvider } from '../auth/AuthProvider.js';
 
 const { userData } = setupAuthProvider();
@@ -12,6 +12,20 @@ const isMenuOpen = ref(false)
 const toggleMenu = () => {
   isMenuOpen.value = !isMenuOpen.value
 }
+
+const checkWindowSize = () => {
+  if (window.innerWidth > 768) { // 768px ist ein typischer Schwellenwert für mobile Ansichten
+    isMenuOpen.value = false
+  }
+}
+
+onMounted(() => {
+  window.addEventListener('resize', checkWindowSize)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('resize', checkWindowSize)
+})
 
 </script>
 
