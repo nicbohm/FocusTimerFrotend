@@ -1,4 +1,6 @@
 import { defineStore } from 'pinia';
+import axios from '../api.js';
+import { useAuthStore as authStore } from '../stores/auth.js';
 
 export const useTimeStore = defineStore('time', {
     state: () => ({ 
@@ -6,6 +8,8 @@ export const useTimeStore = defineStore('time', {
         initialTime: 600, // Speichert den Ausgangswert der Zeit
         timer: null,
         isRunning: false,
+        lastEarnedCoinTime: null, // Speichert den Zeitpunkt des letzten Coin-Erwerbs
+        earnInterval: 61, // Zeitintervall, in dem ein Coin verdient werden kann (in Sekunden)
     }),
     getters: {
         time: (state) => {
@@ -22,6 +26,7 @@ export const useTimeStore = defineStore('time', {
                 this.initialTime = this.timeInSeconds;
                 this.timer = setInterval(() => {
                     this.timeInSeconds--;
+                    this.checkEarnCoin();
                 }, 1000); // Aktualisiert die Zeit alle 1000ms (1 Sekunde)
             }
         },
@@ -42,5 +47,29 @@ export const useTimeStore = defineStore('time', {
                 this.timeInSeconds -= 300;
             }
         },
+        async checkEarnCoin() {
+            const currentTime = Math.floor(Date.now() / 1000); // Aktuelle Zeit in Sekunden
+            // Überprüfe, ob das Zeitintervall für den Coin-Erwerb abgelaufen ist
+            if (!this.lastEarnedCoinTime ||
+                currentTime - this.lastEarnedCoinTime >= this.earnInterval
+            ) {
+                this.lastEarnedCoinTime = currentTime;
+                await this.earnCoin(); // Verdienen eines Coins
+            }
+        },
+        async earnCoin() {
+            const token = localStorage.getItem('authToken');
+            if (!token) {
+                return;
+            }
+            try {
+                await axios.post(`/me/earn`, {}, {
+                headers: { Authorization: `Bearer ${token}` }
+                });
+                await authStore().getUser();
+            } catch (error) {
+                // Wenn der Vorgang abgelehnt wird, dann soll es so sein.
+            }
+        }
     },
 })
