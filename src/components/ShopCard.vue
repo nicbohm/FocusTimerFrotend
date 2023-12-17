@@ -6,6 +6,11 @@ import Baum_Apple from '../assets/Baum_Apple.png';
 
 const props = defineProps(['p', 'fetchProducts']);
 
+const emits = defineEmits(['updatePaymentStatus']);
+const handlePaymentStatus = (status) => {
+  emits('updatePaymentStatus', status);
+};
+
 // Objektmap mit Bildpfaden für verschiedene Produkte erstellen
 const imagePaths = {
   'Baum_Christmas': Baum_Christmas,
@@ -23,13 +28,12 @@ const imagePath = imagePaths[props.p.product.imagePath];
         <div class="p-5">
             <h5 class="text-xl font-semibold tracking-tight text-gray-900">{{ props.p.product.name }}</h5>
             <div class="flex items-center justify-between">
-                <span class="text-3xl font-bold text-gray-900">{{ props.p.product.price }} Coins</span>
-                <ShopButton :p="props.p" :fetchProducts="props.fetchProducts"/>
+                <span v-if="props.p.product.price != 0" class="text-3xl font-bold text-gray-900">{{ props.p.product.price }} Coins</span>
+                <span v-if="props.p.product.price === 0" class="text-3xl font-bold text-gray-900">Free</span>
+                <ShopButton :p="props.p" :fetchProducts="props.fetchProducts" @paymentStatus="handlePaymentStatus"/>
             </div>
         </div>
     </div>
-
-
 </template>
 
 <style scoped>

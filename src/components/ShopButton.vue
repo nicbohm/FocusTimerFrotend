@@ -1,12 +1,11 @@
 <script setup>
-import { ref } from 'vue';
 import check from '../assets/check.svg';
 import axios from '../api.js';
-
 import { useAuthStore } from '../stores/auth.js'
 const authStore = useAuthStore();
 
 const props = defineProps(['p', 'fetchProducts']);
+const emits = defineEmits(['paymentStatus']);
 
 const buyProduct = async (pid) => {
     const token = localStorage.getItem('authToken');
@@ -19,8 +18,9 @@ const buyProduct = async (pid) => {
         });
         props.fetchProducts();
         await authStore.getUser();
+        emits('paymentStatus', 'success');
     } catch (error) {
-        console.error('Fehler bei buyProduct:', error);
+        emits('paymentStatus', 'error');
     }
 }
 
