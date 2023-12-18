@@ -1,13 +1,36 @@
 <script setup>
-import Baum_Default from '../assets/Baum_Default.png';
+import { computed } from 'vue';
+import { useAuthStore } from '../stores/auth.js';
 import TimerCore from '../components/TimerCore.vue';
 import TimerButton from '../components/TimerButton.vue';
+import Baum_Default from '../assets/Baum_Default.png';
+import Baum_Christmas from '../assets/Baum_Christmas.png';
+import Baum_Apple from '../assets/Baum_Apple.png';
+
+const authStore = useAuthStore();
+
+// Objektmap mit Bildpfaden für verschiedene Produkte erstellen
+const imagePaths = {
+  'Baum_Christmas': Baum_Christmas,
+  'Baum_Default': Baum_Default,
+  'Baum_Apple': Baum_Apple,
+  // Weitere Bildpfade hier hinzufügen...
+};
+
+const getForeground = computed(() => {
+  const imagePath = authStore.authUser?.activeForeground?.imagePath || 'Baum_Default';
+  return imagePaths[imagePath];
+});
+
+const getBackground = computed(() => {
+  return authStore.authUser?.activeBackground?.imagePath || 'bg-blue';
+});
 </script>
 
 <template>
-  <div class="main flex justify-center flex-col items-center bg-gray-100 bg-blue">
+  <div class="main flex justify-center flex-col items-center bg-gray-100" :class="getBackground">
     <TimerCore/>
-    <img :src="Baum_Default" class="w-64 mt-6 mb-10" alt="Baum_Default">
+    <img :src="getForeground" class="w-64 mt-6 mb-10" alt="Baum_Default">
     <TimerButton/>
   </div>
 </template>
