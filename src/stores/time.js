@@ -27,6 +27,10 @@ export const useTimeStore = defineStore('time', {
                 this.timer = setInterval(() => {
                     this.timeInSeconds--;
                     this.checkEarnCoin();
+                    // Wenn die Zeit abgelaufen ist, dann ist Schluss.
+                    if (this.timeInSeconds === -1) {
+                        this.stopTimer();
+                    }
                 }, 1000); // Aktualisiert die Zeit alle 1000ms (1 Sekunde)
             }
         },

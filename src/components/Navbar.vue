@@ -77,19 +77,19 @@ onUnmounted(() => {
       <div class="w-full" :class="{ 'hidden': !isMenuOpen }" id="navbar-mobile">
         <ul class="flex flex-col font-medium mt-4 rounded-lg">
           <li>
-            <router-link to="/" class="flex items-center py-2 px-3 text-gray-900 rounded hover:bg-gray-100">
+            <router-link to="/" @click="toggleMenu" class="flex items-center py-2 px-3 text-gray-900 rounded hover:bg-gray-100">
               <img :src="timer" class="w-6 h-5 me-2" alt="Timer">
               Timer
             </router-link>
           </li>
           <li>
-            <router-link to="/shop" class="flex items-center py-2 px-3 text-gray-900 rounded hover:bg-gray-100">
+            <router-link to="/shop" @click="toggleMenu" class="flex items-center py-2 px-3 text-gray-900 rounded hover:bg-gray-100">
               <img :src="shop" class="w-6 h-5 me-2" alt="Shop">
               Shop
             </router-link>
           </li>
           <li>
-            <router-link to="/profile" class="flex items-center py-2 px-3 text-gray-900 rounded hover:bg-gray-100">
+            <router-link to="/profile" @click="toggleMenu" class="flex items-center py-2 px-3 text-gray-900 rounded hover:bg-gray-100">
               <img :src="profile" class="w-6 h-5 me-2" alt="Profile">
               Profile
             </router-link>
