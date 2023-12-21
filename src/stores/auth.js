@@ -35,15 +35,15 @@ export const useAuthStore = defineStore('auth', {
             // Login durchführen
             this.isLoading = true;
             try {
-              const response = await axios.post('/auth/login', {
-                email: data.email,
-                password: data.password,
-              });
-              localStorage.setItem('authToken', response.data);
-              this.authError = false;
-              // Wir wollen direkt alle Infos abspeichern
-              this.getUser(); 
-              this.router.push("/");
+                const response = await axios.post('/auth/login', {
+                    email: data.email,
+                    password: data.password,
+                });
+                localStorage.setItem('authToken', response.data);
+                this.authError = false;
+                // Wir wollen direkt alle Infos abspeichern
+                this.getUser(); 
+                this.router.push("/");
             } catch (error) {
                 this.authError = true;
             } finally {
@@ -63,6 +63,32 @@ export const useAuthStore = defineStore('auth', {
                 // Wir wollen uns direkt anmelden und Infos laden
                 this.loginUser(data);
                 this.getUser();
+            } catch (error) {
+                this.authError = true;
+            } finally {
+                this.isLoading = false;
+            }
+          },
+          async updateUser(data) {
+            // Update durchführen
+            if (localStorage.getItem('authToken') == undefined) {
+                return;
+            }
+            this.isLoading = true;
+            try {
+                await axios.post("/auth/update", {
+                    username: data.username,
+                    email: data.email,
+                    password: data.password,
+                    newPassword: data.newpassword,
+                    delete: data.delete,
+                }, 
+                {
+                    headers: { Authorization: `Bearer ${localStorage.getItem('authToken')}` }
+                });
+                this.authError = false;
+                // Wir wollen direkt alle Infos abspeichern
+                this.getUser(); 
               } catch (error) {
                   this.authError = true;
               } finally {

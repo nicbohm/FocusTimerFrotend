@@ -1,7 +1,14 @@
-# Vue 3 + Vite
+# Focus Timer Frontend
 
-This template should help get you started developing with Vue 3 in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+The Focus Timer project is a joint work of Nic Bohm and Erik Küchler, created as part of our studies at HTW Berlin. Our goal is to develop an application that helps users manage their time and concentration.
 
-## Recommended IDE Setup
+**[Link to Backend Repository](https://github.com/erikkuechler/FocusTimer)**
 
-- [VS Code](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur) + [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin).
+## Description
+
+This frontend repository complements the backend functionality of the Focus Timer application. It serves as the user interface, allowing users to interact with the timer, personalize their workspace, and manage their time effectively.
+
+## Authors
+
+- [@nicbohm](https://github.com/nicbohm)
+- [@erikkuechler](https://github.com/erikkuechler)
