@@ -1,9 +1,14 @@
 <script setup>
 import { ref, watch } from 'vue';
-import { useAuthStore } from '../stores/auth.js'
+import { useAuthStore } from '../stores/auth.js';
+import axios from '../api.js';
 import timer from '../assets/timer.svg';
+import profile from '../assets/profile.svg';
 
 const authStore = useAuthStore();
+
+const intervals = ref(null);
+const token = localStorage.getItem('authToken');
 
 const updateform = ref({
   username: "",
@@ -23,14 +28,26 @@ watch(() => authStore.user, (newUser) => {
   }
 });
 
+// Intervals
+const fetchIntervals = async () =>  {
+  axios.get(`/intervals/all`, {
+  headers: { Authorization: `Bearer ${token}` }
+  }).then(data => intervals.value = data);
+};
+fetchIntervals();
+
+const formatDate = (dateString) => {
+    const options = { day: 'numeric', month: 'long', year: 'numeric' };
+    const date = new Date(dateString);
+    return date.toLocaleDateString('de-DE', options);
+}
+
 </script>
 
 <template>
-  <div class="main bg-gray-100">
+  <div v-if="authStore.user" class="main bg-gray-100">
     <div class="max-w-screen-xl p-4 mt-4 mx-auto">
       <h1 class="text-6xl font-bold">Profile</h1>
-      
-
         <div class="w-full mt-10 bg-white border border-gray-200 rounded-lg shadow">
           <div class="p-6 space-y-4 md:space-y-6 sm:p-8">
             <h1 class="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl">
@@ -74,8 +91,42 @@ watch(() => authStore.user, (newUser) => {
             </form>
           </div>
         </div>
-
-
+        <div class="w-full mt-10 bg-white border border-gray-200 rounded-lg shadow">
+          <div class="p-6 sm:p-8">
+            <h1 class="mb-4 text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl">
+              Erfolgreiche Intervalle
+            </h1>
+            <ul v-if="intervals && intervals.data.length > 0" class="divide-y divide-gray-200 mt-0">
+              <li v-for="(interval) in intervals.data" class="py-3 sm:py-4">
+                  <div class="flex items-center space-x-4">
+                    <div class="flex-shrink-0">
+                        <img :src="timer" class="w-6 h-5 rounded-full" alt="Interval">
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <p class="text-sm font-medium text-gray-900">
+                          {{ interval.duration }}
+                        </p>
+                        <p class="text-sm text-gray-500">
+                          {{ formatDate(interval.date) }}
+                        </p>
+                    </div>
+                    <div class="inline-flex items-center text-base font-semibold text-gray-900">
+                      {{ interval.coinValue }} Coins
+                    </div>
+                  </div>
+              </li>
+            </ul>
+            <p v-else>Du hast noch keine Intervalle abgeschlossen. Zeit, den Fokus zu setzen und produktiv zu werden!</p>
+          </div>
+        </div>
+    </div>
+  </div>
+  <div v-if="!authStore.user" class="main bg-gray-100 justify-center items-center flex">
+    <div class="p-4 md:p-8 bg-white rounded-lg shadow">
+      <img :src="profile" class="w-10 mb-6" alt="profile">
+      <h3 class="mb-3 text-2xl font-bold text-gray-900">Anmeldung erforderlich!</h3>
+      <p class="text-gray-500 font-light text-sm mb-4">Betrachte Dein Profil und erfolgreiche Intervalle.</p>
+      <router-link class="font-medium text-blue-600 hover:underline" to="/login">Anmelden</router-link>
     </div>
   </div>
 </template>

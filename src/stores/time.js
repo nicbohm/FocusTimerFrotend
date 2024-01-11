@@ -10,6 +10,7 @@ export const useTimeStore = defineStore('time', {
         isRunning: false,
         lastEarnedCoinTime: null, // Speichert den Zeitpunkt des letzten Coin-Erwerbs
         earnInterval: 61, // Zeitintervall, in dem ein Coin verdient werden kann (in Sekunden)
+        earnedCoinAmount: 0,
     }),
     getters: {
         time: (state) => {
@@ -36,6 +37,7 @@ export const useTimeStore = defineStore('time', {
         },
         stopTimer() {
             if (this.isRunning) {
+                this.addInterval();
                 this.isRunning = false;
                 this.timeInSeconds = this.initialTime;
                 clearInterval(this.timer); // Stoppt den Timer
@@ -47,7 +49,7 @@ export const useTimeStore = defineStore('time', {
             }
         },
         down() {
-            if (this.timeInSeconds > 600) {
+            if (this.timeInSeconds > 300) {
                 this.timeInSeconds -= 300;
             }
         },
@@ -71,6 +73,32 @@ export const useTimeStore = defineStore('time', {
                 headers: { Authorization: `Bearer ${token}` }
                 });
                 await authStore().getUser();
+                this.earnedCoinAmount++;
+            } catch (error) {
+                // Wenn der Vorgang abgelehnt wird, dann soll es so sein.
+            }
+        },
+        async addInterval() {
+            const elapsedSeconds = this.initialTime - this.timeInSeconds;
+            let duration;
+            if (elapsedSeconds < 60) {
+                duration = `${elapsedSeconds} Sekunden`;
+            } else {
+                duration = `${Math.floor(elapsedSeconds / 60)} Minuten`;
+            }
+            const token = localStorage.getItem('authToken');
+            if (!token) {
+                return;
+            }
+            try {
+                await axios.post(`/intervals/add`, {
+                    duration: duration,
+                    date: new Date(),
+                    coinValue: this.earnedCoinAmount,
+                  }, {
+                headers: { Authorization: `Bearer ${token}` }
+                });
+                this.earnedCoinAmount = 0;
             } catch (error) {
                 // Wenn der Vorgang abgelehnt wird, dann soll es so sein.
             }
